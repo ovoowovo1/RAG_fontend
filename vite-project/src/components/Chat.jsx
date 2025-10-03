@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { Card, Button, Spin, message, Switch, Tooltip, Space, Typography } from 'antd';
 import { UserOutlined, ReloadOutlined, CopyOutlined, ClearOutlined } from '@ant-design/icons';
 import { handleProChatRequest, handleProChatRequestWithProgress, generateWelcomeMessage } from '../utils/proChatHelpers.jsx';
-import useMediaQuery from '../hooks/useMediaQuery';
 import Citation from '../components/Citation.jsx';
 import RetrievalProgress from '../components/RetrievalProgress.jsx';
 import { Bubble, Sender } from '@ant-design/x';

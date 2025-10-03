@@ -183,6 +183,8 @@ export const handleProChatRequestWithProgress = async (messages, options = {}) =
         if (finalResult) {
             const answer_with_citations = finalResult.answer_with_citations;
             const structuredContent = [];
+            const rawSources = Array.isArray(finalResult.raw_sources) ? finalResult.raw_sources : [];
+            const sourceByChunkId = new Map(rawSources.map(s => [String(s.chunkId), s]));
 
             if (!answer_with_citations || answer_with_citations.length === 0) {
                 structuredContent.push({ type: 'text', value: finalResult.answer || '抱歉，我無法處理您的請求' });
@@ -229,14 +231,16 @@ export const handleProChatRequestWithProgress = async (messages, options = {}) =
                                         citationCounter++;
                                     }
 
+                                    const sourceEntry = sourceByChunkId.get(String(citationId));
+
                                     structuredContent.push({
                                         type: 'citation',
                                         number: citationNumber,
                                         details: {
-                                            fileId: sourceRef.file_id,
+                                            fileId: sourceEntry?.fileId,
                                             chunkId: citationId,
-                                            source: sourceRef.source_file,
-                                            page: sourceRef.page_number,
+                                            source: sourceEntry?.source,
+                                            page: sourceEntry?.pageNumber,
                                         }
                                     });
                                 });
