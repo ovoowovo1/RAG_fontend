@@ -56,6 +56,7 @@ const documentsSlice = createSlice({
         selectedFileIds: [],
         selectedShowDocumentContentID: null,
         searchTerm: '',
+        isDocumentListCollapsed: false, // for collapsing document list
     },
     reducers: {
         setSearchTerm: (state, action) => {
@@ -80,6 +81,9 @@ const documentsSlice = createSlice({
             } else {
                 state.selectedFileIds = allFileIds;
             }
+        },
+        toggleDocumentListCollapse: (state) => {
+            state.isDocumentListCollapsed = !state.isDocumentListCollapsed;
         },
     },
     extraReducers: (builder) => {
@@ -127,6 +131,7 @@ export const {
     setSelectedShowDocumentContentID,
     toggleFileSelection,
     toggleSelectAll,
+    toggleDocumentListCollapse,
 } = documentsSlice.actions;
 
 export default documentsSlice.reducer;

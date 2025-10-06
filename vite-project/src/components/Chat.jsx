@@ -169,7 +169,7 @@ export default function Chat({ widthSize = null }) {
     }, [selectedFileIds, filteredDocuments, enableProgress, messages]);
 
     return (
-        <Card hoverable className={`h-full flex flex-col`} style={{ width: widthSize || '100%' }} styles={{ body: { height: '100%', padding: 0, display: 'flex', flexDirection: 'column' } }}>
+        <Card hoverable className={`h-full flex flex-col transition-all duration-300 ease-in-out`} style={{ width: widthSize || '100%' }} styles={{ body: { height: '100%', padding: 0, display: 'flex', flexDirection: 'column' } }}>
             <div className="flex flex-col h-full gap-4">
                 <div className="flex-1 overflow-y-auto p-4">
                     {messages.length === 0 ? (
