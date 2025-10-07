@@ -34,6 +34,12 @@ export const generateQuiz = async (fileIds, options = {}) => {
         formData.append('num_questions', options.numQuestions);
     }
     
+    console.log('發送測驗生成請求:', { fileIds, options });
+    console.log('FormData entries:');
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+    
     return axios.post(`${API_BASE_URL}/quiz/generate`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });

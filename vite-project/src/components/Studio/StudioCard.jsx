@@ -152,9 +152,7 @@ export default function StudioCard({ widthSize = null }) {
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <Tag color="green">{item.num_questions} 題</Tag>
-                                                        {item.was_summarized && (
-                                                            <Tag color="blue">已摘要</Tag>
-                                                        )}
+
                                                     </div>
                                                 </div>
                                                 <Button
