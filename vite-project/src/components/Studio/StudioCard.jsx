@@ -6,6 +6,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, DeleteOutlined } from '@ant-desig
 
 import QuizCard from './QuizCard'
 import QuizReader from './QuizReader'
+import CollapsedIcon from './CollapsedIcon'
 
 import { toggleStudioCardCollapse, setQuizReaderOpen } from '../../redux/studioSlice'
 import { getAllQuizzes, deleteQuiz } from '../../api/quiz'
@@ -34,12 +35,10 @@ export default function StudioCard({ widthSize = null }) {
         }
     };
 
-    // 組件加載時獲取測驗列表
+
     useEffect(() => {
-        if (!isStudioCardCollapsed) {
-            loadQuizzes();
-        }
-    }, [isStudioCardCollapsed]);
+        loadQuizzes();
+    }, []);
 
 
 
@@ -97,15 +96,16 @@ export default function StudioCard({ widthSize = null }) {
                                 icon={< MenuFoldOutlined />}
                                 title="展開 Studio"
                             />
+
+                            <CollapsedIcon />
+                            <Divider />
+
                         </div>
-
-
-
                     </>
                 ) : selectedQuiz ? (
                     // 顯示測驗閱讀器
-                    <QuizReader 
-                        quizId={selectedQuiz.id} 
+                    <QuizReader
+                        quizId={selectedQuiz.id}
                         quizName={selectedQuiz.name}
                         onClose={handleCloseQuiz}
                     />
