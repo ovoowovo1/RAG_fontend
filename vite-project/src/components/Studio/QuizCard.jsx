@@ -74,9 +74,9 @@ export default function QuizCard({ onQuizGenerated }) {
                 loading={loading}
             >
                 <div className="flex justify-between">
-                    <span className="material-icons-outlined text-lime-600">quiz</span>
+                    <span className="material-symbols-outlined text-lime-600">quiz</span>
 
-                    <span className="material-icons-outlined text-lime-600"
+                    <span className="material-symbols-outlined text-lime-600"
                         onClick={(e) => {
                             e.stopPropagation();
                             setOpen(true);

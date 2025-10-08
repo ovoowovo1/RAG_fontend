@@ -3,7 +3,11 @@ import { Card, Typography, Button, message, Divider, List, Tag } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
 import { MenuFoldOutlined, MenuUnfoldOutlined, DeleteOutlined } from '@ant-design/icons'
 
-
+import AudioCard from './AudioCard'
+import VideoCard from './VideoCard'
+import MindMap from './MindMap'
+import ReportCard from './ReportCard'
+import FlashCard from './FlashCard'
 import QuizCard from './QuizCard'
 import QuizReader from './QuizReader'
 import CollapsedIcon from './CollapsedIcon'
@@ -127,6 +131,11 @@ export default function StudioCard({ widthSize = null }) {
 
 
                         <div className="grid grid-cols-2 gap-4">
+                            <AudioCard />
+                            <VideoCard />
+                            <MindMap />
+                            <ReportCard />
+                            <FlashCard />
                             <QuizCard onQuizGenerated={loadQuizzes} />
                         </div>
 
