@@ -2,12 +2,19 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { useSelector } from 'react-redux';
 import { Card, Button, Spin, message, Switch, Tooltip, Space, Typography } from 'antd';
-import { UserOutlined, ReloadOutlined, CopyOutlined, ClearOutlined } from '@ant-design/icons';
-import { handleProChatRequest, handleProChatRequestWithProgress, generateWelcomeMessage } from '../utils/proChatHelpers.jsx';
-import Citation from '../components/Citation.jsx';
-import RetrievalProgress from '../components/RetrievalProgress.jsx';
+import { UserOutlined, ReloadOutlined, CopyOutlined, ClearOutlined   } from '@ant-design/icons';
 import { Bubble, Sender } from '@ant-design/x';
 import MarkdownIt from 'markdown-it';
+
+
+import { handleProChatRequest, handleProChatRequestWithProgress, generateWelcomeMessage } from '../utils/proChatHelpers.jsx';
+import Citation from '../components/Citation.jsx';
+import TTSButton from '../components/TTSButton.jsx';
+import RetrievalProgress from '../components/RetrievalProgress.jsx';
+import extractMessageText from '../utils/extractMessageText';
+
+
+
 
 const md = new MarkdownIt({
     html: true,
@@ -60,35 +67,12 @@ export default function Chat({ widthSize = null }) {
 
     const handleCopy = useCallback((messageContent) => {
         console.log('handleCopy called with:', typeof messageContent, messageContent);
-        let textToCopy = '';
-
-        if (typeof messageContent === 'string') {
-            textToCopy = messageContent;
-        } else if (Array.isArray(messageContent)) {
-            textToCopy = messageContent
-                .filter(p => p && p.type === 'text')
-                .map(p => p.value)
-                .join('\n');
-        } else if (messageContent && typeof messageContent === 'object') {
-            // 如果是物件，嘗試提取文字內容
-            if (messageContent.content) {
-                textToCopy = messageContent.content;
-            } else if (messageContent.value) {
-                textToCopy = messageContent.value;
-            } else {
-                textToCopy = JSON.stringify(messageContent);
-            }
-        } else {
-            textToCopy = String(messageContent || '');
-        }
-
+        const textToCopy = extractMessageText(messageContent);
         console.log('Copying text:', textToCopy);
-
         if (!textToCopy.trim()) {
             message.warning('沒有可複製的內容');
             return;
         }
-
         navigator.clipboard.writeText(textToCopy)
             .then(() => message.success('已複製到剪貼簿'))
             .catch(() => message.error('複製失敗'));
@@ -226,6 +210,7 @@ export default function Chat({ widthSize = null }) {
                                         ) : (
                                             <div className='flex gap-2'>
                                                 <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title="複製回應" />
+                                                <TTSButton text={message} />
                                             </div>
                                         )
                                     ),
