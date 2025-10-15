@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import DocumentList from '../components/DocumentList.jsx';
+import DocumentList from '../components/DocumentList/DocumentList.jsx';
 import DocumentsTabs from '../components/DocumentsTabs.jsx';
 import Chat from '../components/Chat.jsx';
 import StudioCard from '../components/Studio/StudioCard.jsx';

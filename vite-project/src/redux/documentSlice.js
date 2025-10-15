@@ -30,6 +30,21 @@ export const deleteDocument = createAsyncThunk(
     }
 );
 
+export const renameDocument = createAsyncThunk(
+    'documents/renameDocument',
+    async ({ docId, newName }, { rejectWithValue }) => {
+        try {
+            await axios.put(`${API_BASE_URL}/neo4j/files/${docId}`, null, {
+                params: { new_name: newName }
+            });
+            return { docId, newName };
+        } catch (error) {
+            console.error('Rename document error:', error);
+            return rejectWithValue('重新命名文件失敗');
+        }
+    }
+);
+
 export const fetchDocumentContent = createAsyncThunk(
     'document/fetchDocumentContent',
     async (docId, { rejectWithValue }) => {
@@ -105,6 +120,18 @@ const documentsSlice = createSlice({
                 state.items = state.items.filter(doc => doc.id !== action.payload);
             })
             .addCase(deleteDocument.rejected, (state, action) => {
+                state.error = action.payload;
+                console.error(action.payload);
+            })
+            .addCase(renameDocument.fulfilled, (state, action) => {
+                const { docId, newName } = action.payload;
+                const doc = state.items.find(doc => doc.id === docId);
+                if (doc) {
+                    doc.filename = newName;
+                    doc.original_name = newName;
+                }
+            })
+            .addCase(renameDocument.rejected, (state, action) => {
                 state.error = action.payload;
                 console.error(action.payload);
             })

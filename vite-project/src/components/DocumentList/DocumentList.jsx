@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, List, Typography, Button, Input, message, Dropdown } from 'antd';
-import { MenuFoldOutlined, MenuUnfoldOutlined, ShrinkOutlined, PlusOutlined, DeleteOutlined, MoreOutlined, FileTextOutlined, CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Card, List, Typography, Button, Input, message } from 'antd';
+import { MenuFoldOutlined, MenuUnfoldOutlined, ShrinkOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {
     fetchDocuments,
@@ -11,12 +11,14 @@ import {
     toggleFileSelection,
     toggleSelectAll,
     toggleDocumentListCollapse,
-} from '../redux/documentSlice';
+} from '../../redux/documentSlice';
 
-import DocumentContentViewer from './DocumentContentViewer';
-import UploadModal from './UploadModal';
-import AddSourceModal from './AddSourceModal';
-import LinkUploadModal from './LinkUploadModal';
+import DocumentContentViewer from '../DocumentContentViewer';
+import UploadModal from '../UploadModal';
+import AddSourceModal from '../AddSourceModal';
+import LinkUploadModal from '../LinkUploadModal';
+import RenameModal from './RenameModal';
+import DocumentListItem from './DocumentListItem';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -38,6 +40,8 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
     const [uploadModalVisible, setUploadModalVisible] = useState(false);
     const [addSourceModalVisible, setAddSourceModalVisible] = useState(false);
     const [linkModalVisible, setLinkModalVisible] = useState(false);
+    const [renameModalVisible, setRenameModalVisible] = useState(false);
+    const [renamingDoc, setRenamingDoc] = useState(null);
 
     useEffect(() => {
         dispatch(fetchDocuments());
@@ -53,6 +57,19 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
         dispatch(deleteDocument(docId)).then(() => {
             message.success('文件已刪除');
         });
+    };
+
+    const handleRenameClick = (docId) => {
+        const doc = documents.find(d => d.id === docId);
+        if (doc) {
+            setRenamingDoc(doc);
+            setRenameModalVisible(true);
+        }
+    };
+
+    const handleDropdownChange = (open, docId) => {
+        setDropdownOpen(open);
+        setHoveredDocId(open ? docId : null);
     };
 
     const handleFileSelect = (fileId, isSelected) => {
@@ -75,56 +92,6 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
         filteredDocuments.length > 0 && selectedFileIds.length === filteredDocuments.length,
         [selectedFileIds, filteredDocuments]
     );
-
-    const items = (docId) => [
-        {
-            key: '1',
-            label: '刪除',
-            icon: <DeleteOutlined />,
-            onClick: () => handleDeleteClick(docId),
-        },
-    ];
-
-    const getStatusIcon = (status, docId, isCollapsed = false) => {
-        const isHovered = hoveredDocId === docId || dropdownOpen === docId;
-        switch (status) {
-            case 'processed':
-                return <CheckCircleOutlined className={`text-green-500 ${isCollapsed ? 'ml-0' : 'ml-2'}`} />;
-            case 'processing':
-                return <ClockCircleOutlined className={`text-blue-500 ${isCollapsed ? 'ml-0' : 'ml-2'}`} />;
-            case 'failed':
-                return <ExclamationCircleOutlined className={`text-red-500 ${isCollapsed ? 'ml-0' : 'ml-2'}`} />;
-            default:
-                return (
-                    <div
-                        className={`rounded ${isCollapsed ? 'ml-0' : 'ml-2'}`}
-                        onMouseEnter={() => setHoveredDocId(docId)}
-                        onMouseLeave={() => {
-                            if (dropdownOpen !== docId) {
-                                setHoveredDocId(null);
-                            }
-                        }}
-                    >
-                        {isHovered && !isCollapsed ? (
-                            <Dropdown
-                                menu={{ items: items(docId) }}
-                                placement="bottomLeft"
-                                trigger={['click']}
-                                open={dropdownOpen === docId}
-                                onOpenChange={(open) => {
-                                    setDropdownOpen(open ? docId : null);
-                                    setHoveredDocId(open ? docId : null);
-                                }}
-                            >
-                                <Button shape="circle" type="text" icon={<MoreOutlined className="text-zinc-500" />} />
-                            </Dropdown>
-                        ) : (
-                            <Button shape="circle" type="text" icon={<FileTextOutlined className="text-zinc-500" />} />
-                        )}
-                    </div>
-                );
-        }
-    };
 
     return (
         <>
@@ -161,20 +128,20 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                                 loading={loading}
                                 dataSource={filteredDocuments}
                                 renderItem={(doc) => (
-                                    <List.Item
-                                        className={`cursor-pointer  ${selectedFileIds.includes(doc.id) ? 'bg-blue-50' : ''}`}
-                                    >
-                                        <div 
-                                            className="items-center w-full" 
-                                            onClick={(e) => { 
-                                                e.stopPropagation(); 
-                                                dispatch(setSelectedShowDocumentContentID(doc.id));
-                                                dispatch(toggleDocumentListCollapse());
-                                            }}
-                                        >
-                                            {getStatusIcon(doc.status, doc.id, true)}
-                                        </div>
-                                    </List.Item>
+                                    <DocumentListItem
+                                        doc={doc}
+                                        isSelected={isFileSelected(doc.id)}
+                                        isCollapsed={true}
+                                        hoveredDocId={hoveredDocId}
+                                        dropdownOpen={dropdownOpen}
+                                        onHover={setHoveredDocId}
+                                        onDropdownChange={handleDropdownChange}
+                                        onViewContent={(id) => dispatch(setSelectedShowDocumentContentID(id))}
+                                        onSelect={handleFileSelect}
+                                        onDelete={handleDeleteClick}
+                                        onRename={handleRenameClick}
+                                        onToggleCollapse={() => dispatch(toggleDocumentListCollapse())}
+                                    />
                                 )}
                             />
                         </div>
@@ -238,26 +205,20 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                                         loading={loading}
                                         dataSource={filteredDocuments}
                                         renderItem={(doc) => (
-                                            <List.Item
-                                                className={`cursor-pointer hover:bg-gray-50 ${selectedFileIds.includes(doc.id) ? 'bg-blue-50' : ''}`}
-                                            >
-                                                <div className="flex items-center w-full">
-                                                    <div className="flex items-center">{getStatusIcon(doc.status, doc.id)}</div>
-                                                    <div className="flex-1 mx-3 flex items-center min-w-0" onClick={(e) => { e.stopPropagation(); dispatch(setSelectedShowDocumentContentID(doc.id)); }}>
-                                                        <Text className="text-sm truncate" title={doc.filename}>{doc.filename}</Text>
-                                                    </div>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isFileSelected(doc.id)}
-                                                        onChange={(e) => {
-                                                            e.stopPropagation();
-                                                            handleFileSelect(doc.id, e.target.checked);
-                                                        }}
-                                                        className="mr-2"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    />
-                                                </div>
-                                            </List.Item>
+                                            <DocumentListItem
+                                                doc={doc}
+                                                isSelected={isFileSelected(doc.id)}
+                                                isCollapsed={false}
+                                                hoveredDocId={hoveredDocId}
+                                                dropdownOpen={dropdownOpen}
+                                                onHover={setHoveredDocId}
+                                                onDropdownChange={handleDropdownChange}
+                                                onViewContent={(id) => dispatch(setSelectedShowDocumentContentID(id))}
+                                                onSelect={handleFileSelect}
+                                                onDelete={handleDeleteClick}
+                                                onRename={handleRenameClick}
+                                                onToggleCollapse={() => dispatch(toggleDocumentListCollapse())}
+                                            />
                                         )}
                                     />
                                 </div>
@@ -300,6 +261,15 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                 visible={linkModalVisible}
                 onCancel={() => setLinkModalVisible(false)}
                 onSuccess={() => dispatch(fetchDocuments())}
+            />
+            <RenameModal
+                visible={renameModalVisible}
+                onCancel={() => {
+                    setRenameModalVisible(false);
+                    setRenamingDoc(null);
+                }}
+                docId={renamingDoc?.id}
+                currentName={renamingDoc?.filename}
             />
         </>
     );
