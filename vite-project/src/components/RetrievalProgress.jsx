@@ -5,14 +5,14 @@ import { SearchOutlined, DatabaseOutlined, FileTextOutlined, CheckCircleOutlined
 const { Text } = Typography;
 
 const RetrievalProgress = ({ progressMessages = [] }) => {
-    const isCompleted = progressMessages.some(msg => msg.message?.includes('✅ 查詢完成'));
+    const isCompleted = progressMessages.some(msg => msg.message?.includes('✅  All retrieval tasks completed'));
 
     const parseProgress = (messages) => {
         // ############ STEP 1: 在任務物件中增加 count 屬性 ############
         const tasks = {
-            graph: { name: '圖譜檢索', status: 'waiting', icon: <DatabaseOutlined />, color: '#1890ff', count: null },
-            vector: { name: '向量檢索', status: 'waiting', icon: <SearchOutlined />, color: '#52c41a', count: null },
-            fulltext: { name: '全文檢索', status: 'waiting', icon: <FileTextOutlined />, color: '#faad14', count: null }
+            graph: { name: 'Graph Retrieval', status: 'waiting', icon: <DatabaseOutlined />, color: '#1890ff', count: null },
+            vector: { name: 'Vector Retrieval', status: 'waiting', icon: <SearchOutlined />, color: '#52c41a', count: null },
+            fulltext: { name: 'Full-text Retrieval', status: 'waiting', icon: <FileTextOutlined />, color: '#faad14', count: null }
         };
 
         messages.forEach(msg => {
@@ -60,8 +60,8 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
 
     const getStatusTag = (status) => {
         switch (status) {
-            case 'running': return <Tag color="processing">進行中</Tag>;
-            case 'waiting': return <Tag color="default">等待中</Tag>;
+            case 'running': return <Tag color="processing">In Progress</Tag>;
+            case 'waiting': return <Tag color="default">Waiting</Tag>;
             default: return null; // 'completed' 狀態將由結果數量標籤替代
         }
     };
@@ -87,7 +87,7 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <Text strong style={{ fontSize: '12px' }}>
-                            {isCompleted ? '檢索完成' : '檢索進度'}
+                            {isCompleted ? 'Retrieval Completed' : 'Retrieval Progress'}
                         </Text>
                         <Text style={{ fontSize: '11px', color: '#666' }}>
                             {Math.round(finalProgress)}%
@@ -119,7 +119,7 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
                           
                             {task.status === 'completed' && typeof task.count === 'number' ? (
                                 <Tag>
-                                    {task.count} 個結果
+                                    {task.count} results
                                 </Tag>
                             ) : (
                                 getStatusTag(task.status)
@@ -132,7 +132,7 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
                 {!isCompleted && lastProgressMessage && (
                     <div className="border-t pt-2 mt-2">
                         <Text ellipsis={'expandable'} style={{ fontSize: '11px', color: '#888' }} className='truncate'>
-                            最新進度: {lastProgressMessage}
+                            Latest progress: {lastProgressMessage}
                         </Text>
                     </div>
                 )}

@@ -85,13 +85,13 @@ export default function Chat({ widthSize = null }) {
         console.log('Copying text:', textToCopy);
 
         if (!textToCopy.trim()) {
-            message.warning('沒有可複製的內容');
+            message.warning('No content to copy');
             return;
         }
 
         navigator.clipboard.writeText(textToCopy)
-            .then(() => message.success('已複製到剪貼簿'))
-            .catch(() => message.error('複製失敗'));
+            .then(() => message.success('Copied to clipboard'))
+            .catch(() => message.error('Copy failed'));
     }, []);
 
     const handleResend = useCallback((messageContent) => {
@@ -120,7 +120,7 @@ export default function Chat({ widthSize = null }) {
         setProgressMessages([]);
 
         const userMessageObj = { id: `user-${Date.now()}`, message: userMessage, status: 'local' };
-        const loadingMessageObj = { id: `loading-${Date.now()}`, message: '正在處理您的查詢...', status: 'loading' };
+        const loadingMessageObj = { id: `loading-${Date.now()}`, message: 'Processing your query...', status: 'loading' };
 
         flushSync(() => {
             setMessages(prev => [...prev, userMessageObj, loadingMessageObj]);
@@ -149,7 +149,7 @@ export default function Chat({ widthSize = null }) {
             console.error('聊天請求錯誤:', error);
             setMessages(prev => [
                 ...prev.filter(msg => msg.status !== 'loading'),
-                { id: `ai-error-${Date.now()}`, message: '抱歉，發生了錯誤，請稍後再試。', status: 'ai' },
+                { id: `ai-error-${Date.now()}`, message: 'Sorry, an error occurred, please try again later.', status: 'ai' },
             ]);
         };
 
@@ -220,12 +220,12 @@ export default function Chat({ widthSize = null }) {
                                     footer: status === 'loading' ? null : (
                                         status === 'local' ? (
                                             <div className='flex gap-2'>
-                                                <Button type="text" size="small" icon={<ReloadOutlined />} onClick={() => handleResend(message)} title="重新發送" />
-                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title="複製訊息" />
+                                                <Button type="text" size="small" icon={<ReloadOutlined />} onClick={() => handleResend(message)} title="Resend" />
+                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title="Copy message" />
                                             </div>
                                         ) : (
                                             <div className='flex gap-2'>
-                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title="複製回應" />
+                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title="Copy response" />
                                             </div>
                                         )
                                     ),
@@ -240,10 +240,10 @@ export default function Chat({ widthSize = null }) {
                 </div>
                 <div className="p-4 border-t border-gray-200">
                     <div className="flex gap-2 items-center mb-2">
-                        <Tooltip title="啟用時會顯示檢索進度">
+                        <Tooltip title="When enabled, retrieval progress will be displayed">
                             <div className="flex items-center gap-2">
                                 <Switch size="small" checked={enableProgress} onChange={setEnableProgress} />
-                                <span className="text-xs text-gray-500">進度顯示</span>
+                                <span className="text-xs text-gray-500">Progress Display</span>
                             </div>
                         </Tooltip>
                     </div>
@@ -256,7 +256,7 @@ export default function Chat({ widthSize = null }) {
                                 onChange={setContent}
                                 allowSpeech
                                 onSubmit={nextContent => { handleChatRequest(nextContent); setContent(''); }}
-                                placeholder='請輸入問題...'
+                                placeholder='Please enter your question...'
                                 actions={(_, info) => {
                                     const { SendButton, LoadingButton, ClearButton, SpeechButton } = info.components;
                                     return (
@@ -265,7 +265,7 @@ export default function Chat({ widthSize = null }) {
                                                 <Typography.Text type="secondary">
                                                     <small>`Enter` to submit</small>
                                                 </Typography.Text>
-                                                { messages.length > 0 && <Button type="text" icon={<ClearOutlined />} onClick={handleClearChat} title="清空對話" className="flex-shrink-0" /> }
+                                                { messages.length > 0 && <Button type="text" icon={<ClearOutlined />} onClick={handleClearChat} title="Clear conversation" className="flex-shrink-0" /> }
                                                 <SpeechButton />
                                                 {isLoading ? (
                                                     <LoadingButton type="default" icon={<Spin size="small" />} disabled />

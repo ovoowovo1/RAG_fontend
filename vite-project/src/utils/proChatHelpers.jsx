@@ -480,20 +480,20 @@ export const defaultProChatConfig = {
  */
 export const generateWelcomeMessage = (documentCount, selectedCount = 0) => {
     if (documentCount === 0) {
-        return "歡迎使用智慧文件助手！請先上傳一些文件，然後我就可以幫您分析其中的內容。";
+            return "Welcome to the Smart Document Assistant! Please upload some documents first, then I can help you analyze their contents.";
     }
 
-    let baseMessage = `歡迎使用智慧文件助手！我已經為您載入了 ${documentCount} 個文件。`;
+        let baseMessage = `Welcome to the Smart Document Assistant! I have loaded ${documentCount} document(s) for you.`;
 
-    if (selectedCount > 0 && selectedCount < documentCount) {
-        baseMessage += `\n\n您目前選擇了 ${selectedCount} 個文件進行查詢。我會在這些選中的文件中尋找答案。`;
-    } else if (selectedCount === documentCount && documentCount > 1) {
-        baseMessage += "\n\n您選擇了所有文件，我會在全部文件中為您查詢答案。";
-    } else {
-        baseMessage += "\n\n請在左側選擇要查詢的文件，或選擇全部文件進行搜索。";
-    }
+        if (selectedCount > 0 && selectedCount < documentCount) {
+            baseMessage += `\n\nYou have selected ${selectedCount} document(s) for querying. I will search for answers within these selected documents.`;
+        } else if (selectedCount === documentCount && documentCount > 1) {
+            baseMessage += "\n\nYou have selected all documents. I will search for answers across all documents.";
+        } else {
+            baseMessage += "\n\nPlease select documents on the left to query, or select all documents to search.";
+        }
 
-    baseMessage += "\n\n您可以問我關於這些文件的任何問題！";
+        baseMessage += "\n\nYou can ask me any questions about these documents!";
 
     return baseMessage;
 };

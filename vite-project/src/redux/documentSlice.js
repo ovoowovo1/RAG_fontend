@@ -11,7 +11,7 @@ export const fetchDocuments = createAsyncThunk(
             return response.data.files || [];
         } catch (error) {
             console.error('Fetch documents error:', error);
-            return rejectWithValue('載入文件列表失敗');
+            return rejectWithValue('Failed to load document list');
         }
     }
 );
@@ -25,7 +25,7 @@ export const deleteDocument = createAsyncThunk(
             return docId;
         } catch (error) {
             console.error('Delete document error:', error);
-            return rejectWithValue('刪除文件失敗');
+            return rejectWithValue('Failed to delete document');
         }
     }
 );

@@ -145,7 +145,7 @@ export default function DocumentList({ widthSize }) {
             {!selectedShowDocumentContentID && (
                 <>
                     <Search
-                        placeholder="搜尋文件..."
+                        placeholder="Search sources..."
                         value={searchTerm}
                         onChange={(e) => dispatch(setSearchTerm(e.target.value))}
                         className="mb-4"

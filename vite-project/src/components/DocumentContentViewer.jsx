@@ -37,7 +37,7 @@ const DocumentContentViewer = ({
 
             ) : documentData ? (
                 <div className="flex flex-col flex-1 h-full">
-                    <h4 className="mb-2 flex-shrink-0">文件內容</h4>
+                    <h4 className="mb-2 flex-shrink-0">Document Content</h4>
                     <div className="overflow-y-auto flex-1 h-0">
                         {documentData.chunks.map((chunk, index) => (
                             <LazyLoadChunk key={index} chunk={chunk} />
