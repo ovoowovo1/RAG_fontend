@@ -1,0 +1,152 @@
+{
+  "welcome": {
+    "noDocuments": "Welcome to the Intelligent Document Assistant! Please upload some documents first, and then I can help you analyze their content.",
+    "baseMessage": "Welcome to the Intelligent Document Assistant! I have loaded {{count}} document(s) for you.",
+    "selectedPartial": "You have currently selected {{selectedCount}} document(s) for querying. I will search for answers in these selected documents.",
+    "selectedAll": "You have selected all documents. I will search for answers across all documents.",
+    "noSelection": "Please select the documents you want to query on the left, or select all documents to search.",
+    "askQuestion": "You can ask me any questions about these documents!",
+    "documentContent": "Document Content"
+  },
+  "documentContentViewer": {
+    "documentContent": "Document Content"
+  },
+  "addSourceModal": {
+    "title": "Add Source",
+    "selectType": "Please select the type of source to add",
+    "uploadPdf": "Upload PDF",
+    "addLink": "Add Link"
+  },
+  "uploadModal": {
+    "title": "Upload PDF Documents",
+    "selectFiles": "Please select files to upload",
+    "uploadSuccess": "All {{count}} file(s) uploaded successfully.",
+    "uploadFailed": "File upload failed",
+    "uploadError": "Upload failed: {{error}}",
+    "notPdfFile": "{{fileName}} is not a PDF file and has been automatically removed.",
+    "cancel": "Cancel",
+    "uploading": "Uploading...",
+    "confirmUpload": "Confirm Upload {{count}} File(s)",
+    "dragText": "Click or drag multiple PDFs here",
+    "hint": "Supports uploading multiple PDF files. After selecting files, please click the confirm button below."
+  },
+  "linkUploadModal": {
+    "title": "Add Link",
+    "enterLink": "Please enter a link",
+    "submitSuccess": "Link submitted for processing",
+    "submitFailed": "Link submission failed",
+    "submitting": "Submitting...",
+    "submit": "Submit",
+    "placeholder": "Enter the link to fetch, e.g., https://example.com/article"
+  },
+  "documentList": {
+    "documentDeleted": "Document deleted",
+    "expandList": "Expand document list",
+    "collapseList": "Collapse document list",
+    "sources": "Sources",
+    "searchPlaceholder": "Search documents...",
+    "selectAll": "Select all sources",
+    "add": "Add",
+    "sourcesCount": "{{count}} sources",
+    "selectedCount": "({{count}} selected)"
+  },
+  "renameModal": {
+    "title": "Rename Document",
+    "enterNewName": "Please enter a new file name",
+    "nameUnchanged": "Name unchanged",
+    "renameSuccess": "Document renamed successfully",
+    "renameFailed": "Rename failed",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "placeholder": "Please enter a new file name",
+    "hint": "Press Enter to confirm quickly"
+  },
+  "documentStatusIcon": {
+    "delete": "Delete",
+    "rename": "Rename"
+  },
+  "chat": {
+    "noContentToCopy": "No content to copy",
+    "copiedToClipboard": "Copied to clipboard",
+    "copyFailed": "Copy failed",
+    "processingQuery": "Processing your query...",
+    "errorOccurred": "Sorry, an error occurred. Please try again later.",
+    "resend": "Resend",
+    "copyMessage": "Copy message",
+    "copyResponse": "Copy response",
+    "progressTooltip": "Show retrieval progress when enabled",
+    "progressDisplay": "Progress Display",
+    "inputPlaceholder": "Please enter your question...",
+    "enterToSubmit": "Press Enter to submit",
+    "clearChat": "Clear chat"
+  },
+  "studioCard": {
+    "title": "Studio",
+    "expandStudio": "Expand Studio",
+    "collapseStudio": "Collapse Studio",
+    "fetchQuizzesFailed": "Failed to fetch quiz list",
+    "quizDeleted": "Quiz deleted",
+    "deleteQuizFailed": "Failed to delete quiz",
+    "unknownTime": "Unknown time",
+    "noQuizzes": "No quiz records",
+    "unnamedQuiz": "Unnamed quiz",
+    "questions": "questions",
+    "source": "Source"
+  },
+  "retrievalProgress": {
+    "graphRetrieval": "Graph Retrieval",
+    "vectorRetrieval": "Vector Retrieval",
+    "fulltextRetrieval": "Fulltext Retrieval",
+    "running": "Running",
+    "waiting": "Waiting",
+    "completed": "Retrieval Completed",
+    "inProgress": "Retrieval Progress",
+    "results": "results",
+    "latestProgress": "Latest Progress",
+    "queryCompleted": "✅ Query Completed"
+  },
+  "proChatHelpers": {
+    "invalidMessage": "Invalid message content",
+    "noValidResult": "No valid result received",
+    "errorOccurred": "Sorry, an error occurred. Please try again later.",
+    "serviceUnavailable": "Service temporarily unavailable. Please try again later.",
+    "badRequest": "Bad request format.",
+    "networkError": "Network connection error. Please check your network settings."
+  },
+  "ttsButton": {
+    "noTextToConvert": "No text content to convert",
+    "playbackFailed": "Audio playback failed",
+    "generationFailed": "Voice generation failed. Please try again later.",
+    "stopPlayback": "Stop playback",
+    "voicePlayback": "Voice playback"
+  },
+  "citation": {
+    "title": "Citation Source",
+    "source": "Source",
+    "page": "Page"
+  },
+  "quizReader": {
+    "loadFailed": "Failed to load quiz",
+    "selectAnswer": "Please select an answer",
+    "back": "Back",
+    "quizCompleted": "Quiz Completed!",
+    "backToList": "Back to List",
+    "retakeQuiz": "Retake Quiz",
+    "quiz": "Quiz",
+    "correct": "✓ Correct!",
+    "incorrect": "✗ Incorrect",
+    "rationale": "Explanation:",
+    "previous": "Previous",
+    "submitAnswer": "Submit Answer",
+    "finishQuiz": "Finish Quiz",
+    "next": "Next",
+    "explainDetails": "Explain Details",
+    "messageSent": "Message sent to chat",
+    "quizQuestionPrompt": "While taking this quiz, I encountered this question: \"{{question}}\"",
+    "selectedAnswerPrompt": "I selected the following answer: \"{{answer}}\"",
+    "answerCorrect": "This answer is correct.",
+    "answerIncorrect": "This answer is incorrect. The correct answer is \"{{correctAnswer}}\"",
+    "pleaseHelp": "Please help me understand why this answer is correct/incorrect and explain the related concepts."
+  }
+}
+

@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Popover, Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { fetchDocumentContent } from '../redux/documentSlice';
 
 export default function Citation({ part, index }) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const { fileId: selectedShowDocumentContentID, chunkId: citationId } = part.details;
 
@@ -39,8 +41,8 @@ export default function Citation({ part, index }) {
 
     const popoverContent = (
         <div className="max-w-xs max-h-96 overflow-y-auto">
-            <p><strong>來源:</strong> {part.details.source}</p>
-            <p><strong>頁碼:</strong> {part.details.page}</p>
+            <p><strong>{t('citation.source')}:</strong> {part.details.source}</p>
+            <p><strong>{t('citation.page')}:</strong> {part.details.page}</p>
             <hr className="my-2" />
             {isLoading ? (
                 <div className="flex justify-center items-center p-4">
@@ -71,7 +73,7 @@ export default function Citation({ part, index }) {
     return (
         <Popover
             content={popoverContent}
-            title="引用來源"
+            title={t('citation.title')}
             trigger="click"
             key={index}
             open={popoverVisible} 

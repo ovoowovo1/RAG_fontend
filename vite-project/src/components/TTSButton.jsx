@@ -1,11 +1,13 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { SoundOutlined, PauseCircleOutlined } from '@ant-design/icons'
 import { Button, message } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 import { getTTS } from '../api/TTS'
 import extractMessageText from '../utils/extractMessageText'
 
 export default function TTSButton({ text }) {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef(null); // 用於保存 Audio 實例
@@ -66,7 +68,7 @@ export default function TTSButton({ text }) {
             const processedText = processText(text);
             
             if (!processedText || !processedText.trim()) {
-                message.warning('沒有可轉換的文本內容');
+                message.warning(t('ttsButton.noTextToConvert'));
                 return;
             }
             
@@ -126,7 +128,7 @@ export default function TTSButton({ text }) {
                     networkState: audio.networkState,
                     readyState: audio.readyState
                 });
-                message.error('音頻播放失敗');
+                message.error(t('ttsButton.playbackFailed'));
                 setIsPlaying(false);
                 // 發生錯誤時清除緩存，下次重新生成
                 if (audioUrlRef.current) {
@@ -144,7 +146,7 @@ export default function TTSButton({ text }) {
 
         } catch (error) {
             console.error('TTS 錯誤:', error);
-            message.error('語音生成失敗，請稍後再試');
+            message.error(t('ttsButton.generationFailed'));
         } finally {
             setLoading(false);
         }
@@ -155,7 +157,7 @@ export default function TTSButton({ text }) {
             type="text"
             size="small"
             icon={isPlaying ? <PauseCircleOutlined /> : <SoundOutlined />}
-            title={isPlaying ? "停止播放" : "語音播放"}
+            title={isPlaying ? t('ttsButton.stopPlayback') : t('ttsButton.voicePlayback')}
             loading={loading}
             onClick={handleTTS}
         />

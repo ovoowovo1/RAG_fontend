@@ -5,6 +5,7 @@ import DocumentList from '../components/DocumentList/DocumentList.jsx';
 import DocumentsTabs from '../components/DocumentsTabs.jsx';
 import Chat from '../components/Chat.jsx';
 import StudioCard from '../components/Studio/StudioCard.jsx';
+import Topbar from '../components/Topbar.jsx';
 
 import useMediaQuery from '../hooks/useMediaQuery';
 import useLayoutWidth from '../hooks/useLayoutWidth';
@@ -36,10 +37,13 @@ const DocumentsPage = () => {
                         />
                     </div>
                 ) : (
-                    <div className={`h-screen p-4 flex overflow-hidden gap-4  bg-gray-100 `}>
-                        <DocumentList widthSize={documentListWidth} />
-                        <Chat widthSize={chatWidth} />
-                        <StudioCard widthSize={studioCardWidth} />
+                    <div className="h-screen flex flex-col overflow-hidden bg-gray-100">
+                        <Topbar />
+                        <div className="flex-1 p-4 flex overflow-hidden gap-4">
+                            <DocumentList widthSize={documentListWidth} />
+                            <Chat widthSize={chatWidth} />
+                            <StudioCard widthSize={studioCardWidth} />
+                        </div>
                     </div>
                 )}
         </>

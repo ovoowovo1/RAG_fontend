@@ -1,13 +1,16 @@
 import React from 'react';
 import { Modal, Button, Typography } from 'antd';
 import { LinkOutlined, FilePdfOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 const AddSourceModal = ({ visible, onCancel, onSelect }) => {
+  const { t } = useTranslation();
+
   return (
     <Modal
-      title="新增來源"
+      title={t('addSourceModal.title')}
       open={visible}
       onCancel={onCancel}
       footer={null}
@@ -15,7 +18,7 @@ const AddSourceModal = ({ visible, onCancel, onSelect }) => {
       destroyOnClose
     >
       <div className="flex flex-col gap-4">
-        <Text className="text-zinc-500">請選擇要新增的來源種類</Text>
+        <Text className="text-zinc-500">{t('addSourceModal.selectType')}</Text>
         <div className="grid grid-cols-2 gap-3">
           <Button
             type="default"
@@ -23,7 +26,7 @@ const AddSourceModal = ({ visible, onCancel, onSelect }) => {
             icon={<FilePdfOutlined />}
             onClick={() => onSelect && onSelect('pdf')}
           >
-            上傳 PDF
+            {t('addSourceModal.uploadPdf')}
           </Button>
           <Button
             type="default"
@@ -31,7 +34,7 @@ const AddSourceModal = ({ visible, onCancel, onSelect }) => {
             icon={<LinkOutlined />}
             onClick={() => onSelect && onSelect('link')}
           >
-            新增連結
+            {t('addSourceModal.addLink')}
           </Button>
         </div>
       </div>

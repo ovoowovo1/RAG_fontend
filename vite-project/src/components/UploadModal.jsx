@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button, message, Upload, Progress } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 import { uploadMultiple } from '../api/upload.js';
 import useUploadProgress from '../hooks/useUploadProgress.jsx';
@@ -8,30 +9,32 @@ import useUploadProgress from '../hooks/useUploadProgress.jsx';
 const { Dragger } = Upload;
 
 const UploadModal = ({ visible, onCancel, onSuccess }) => {
+  const { t } = useTranslation();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const { progress, showProgress, startTracking, stopTracking, abortTracking, genClientId } = useUploadProgress();
 
   const handleUpload = () => {
     if (fileList.length === 0) {
-      message.warning('請選擇要上傳的文件');
+      message.warning(t('uploadModal.selectFiles'));
       return;
     }
 
     setUploading(true);
     const cid = startTracking(genClientId());
+    const fileCount = fileList.length;
 
     uploadMultiple(fileList, cid)
       .then((responses) => {
         setFileList([]);
-        message.success(`${fileList.length} 個檔案全部上傳成功。`);
+        message.success(t('uploadModal.uploadSuccess', { count: fileCount }));
         onSuccess && onSuccess();
         onCancel(); 
       })
       .catch((error) => {
         console.error("Upload error:", error);
-        const errorMessage = error.response?.data?.error || error.message || '檔案上傳失敗';
-        message.error(`上傳失敗: ${errorMessage}`);
+        const errorMessage = error.response?.data?.error || error.message || t('uploadModal.uploadFailed');
+        message.error(t('uploadModal.uploadError', { error: errorMessage }));
       })
       .finally(() => {
         setUploading(false);
@@ -56,7 +59,7 @@ const UploadModal = ({ visible, onCancel, onSuccess }) => {
       const pdfFiles = allFiles.filter(f => {
         const isPdf = f.type === 'application/pdf';
         if (!isPdf) {
-          message.error(`${f.name} 不是一個 PDF 檔案，已自動移除。`);
+          message.error(t('uploadModal.notPdfFile', { fileName: f.name }));
         }
         return isPdf;
       });
@@ -70,12 +73,12 @@ const UploadModal = ({ visible, onCancel, onSuccess }) => {
 
   return (
     <Modal
-      title="上傳 PDF 文件"
+      title={t('uploadModal.title')}
       open={visible}
       onCancel={handleCancel}
       footer={[
         <Button key="cancel" onClick={handleCancel}>
-          取消
+          {t('uploadModal.cancel')}
         </Button>,
         <Button
           key="upload"
@@ -84,7 +87,7 @@ const UploadModal = ({ visible, onCancel, onSuccess }) => {
           disabled={fileList.length === 0}
           loading={uploading}
         >
-          {uploading ? '上傳中...' : `確認上傳 ${fileList.length} 個檔案`}
+          {uploading ? t('uploadModal.uploading') : t('uploadModal.confirmUpload', { count: fileList.length })}
         </Button>
       ]}
       width={600}
@@ -103,10 +106,10 @@ const UploadModal = ({ visible, onCancel, onSuccess }) => {
           <InboxOutlined style={{ color: '#7c3aed', fontSize: '48px' }} />
         </p>
         <p className="ant-upload-text" style={{ fontSize: '18px', color: '#666' }}>
-          點擊或拖曳多個 PDF 到這裡
+          {t('uploadModal.dragText')}
         </p>
         <p className="ant-upload-hint" style={{ color: '#999', marginTop: '8px' }}>
-          支援上傳多個 PDF 檔案。選擇檔案後請點擊下方的確認按鈕。
+          {t('uploadModal.hint')}
         </p>
       </Dragger>
       {(uploading || showProgress) && (

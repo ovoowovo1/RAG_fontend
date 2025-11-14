@@ -2,6 +2,7 @@ import React from 'react';
 
 import axios from 'axios';
 import MarkdownIt from 'markdown-it';
+import i18n from '../i18n';
 
 
 import { API_BASE_URL } from '../config.js';
@@ -86,7 +87,7 @@ export const handleProChatRequestWithProgress = async (messages, options = {}) =
         const userQuestion = lastMessage?.content;
 
         if (!userQuestion) {
-            throw new Error('無效的訊息內容');
+            throw new Error(i18n.t('proChatHelpers.invalidMessage'));
         }
 
         console.log('ProChat SSE 發送查詢:', userQuestion);
@@ -94,6 +95,7 @@ export const handleProChatRequestWithProgress = async (messages, options = {}) =
 
         const requestData = {
             question: userQuestion,
+            language: i18n.language, // 添加語言參數
             ...requestBody
         };
 
@@ -255,17 +257,17 @@ export const handleProChatRequestWithProgress = async (messages, options = {}) =
             };
         }
 
-        throw new Error('未收到有效的結果');
+        throw new Error(i18n.t('proChatHelpers.noValidResult'));
 
     } catch (error) {
         console.error('ProChat SSE 請求錯誤:', error);
-        let errorMessage = '抱歉，發生了錯誤，請稍後再試。';
+        let errorMessage = i18n.t('proChatHelpers.errorOccurred');
         if (error.response?.status === 503) {
-            errorMessage = '服務暫時不可用，請稍後再試。';
+            errorMessage = i18n.t('proChatHelpers.serviceUnavailable');
         } else if (error.response?.status === 400) {
-            errorMessage = error.response.data?.error || '請求格式錯誤。';
+            errorMessage = error.response.data?.error || i18n.t('proChatHelpers.badRequest');
         } else if (error.code === 'NETWORK_ERROR') {
-            errorMessage = '網路連接錯誤，請檢查網路設定。';
+            errorMessage = i18n.t('proChatHelpers.networkError');
         }
         return {
             text: () => Promise.resolve(errorMessage)
@@ -285,13 +287,14 @@ export const handleProChatRequest = async (messages, options = {}) => {
         const userQuestion = lastMessage?.content;
 
         if (!userQuestion) {
-            throw new Error('無效的訊息內容');
+            throw new Error(i18n.t('proChatHelpers.invalidMessage'));
         }
 
         console.log('ProChat 發送查詢:', userQuestion);
 
         const requestBody = {
             question: userQuestion,
+            language: i18n.language, // 添加語言參數
             ...options.requestBody
         };
 
@@ -380,13 +383,13 @@ export const handleProChatRequest = async (messages, options = {}) => {
 
     } catch (error) {
         console.error('ProChat API 請求錯誤:', error);
-        let errorMessage = '抱歉，發生了錯誤，請稍後再試。';
+        let errorMessage = i18n.t('proChatHelpers.errorOccurred');
         if (error.response?.status === 503) {
-            errorMessage = '服務暫時不可用，請稍後再試。';
+            errorMessage = i18n.t('proChatHelpers.serviceUnavailable');
         } else if (error.response?.status === 400) {
-            errorMessage = error.response.data?.error || '請求格式錯誤。';
+            errorMessage = error.response.data?.error || i18n.t('proChatHelpers.badRequest');
         } else if (error.code === 'NETWORK_ERROR') {
-            errorMessage = '網路連接錯誤，請檢查網路設定。';
+            errorMessage = i18n.t('proChatHelpers.networkError');
         }
         return new Response(errorMessage, {
             status: error.response?.status || 500,
@@ -406,7 +409,7 @@ export const handleStreamingRequest = async (messages) => {
         const userQuestion = lastMessage?.content;
 
         if (!userQuestion) {
-            throw new Error('無效的訊息內容');
+            throw new Error(i18n.t('proChatHelpers.invalidMessage'));
         }
 
         // 創建一個可讀流
@@ -415,7 +418,8 @@ export const handleStreamingRequest = async (messages) => {
                 try {
                     // 模擬分段回應
                     const response = await axios.post(`${API_BASE_URL}/query`, {
-                        question: userQuestion
+                        question: userQuestion,
+                        language: i18n.language // 添加語言參數
                     });
 
                     const answer = response.data.answer || '抱歉，我無法處理您的請求。';
@@ -480,20 +484,20 @@ export const defaultProChatConfig = {
  */
 export const generateWelcomeMessage = (documentCount, selectedCount = 0) => {
     if (documentCount === 0) {
-        return "歡迎使用智慧文件助手！請先上傳一些文件，然後我就可以幫您分析其中的內容。";
+        return i18n.t('welcome.noDocuments');
     }
 
-    let baseMessage = `歡迎使用智慧文件助手！我已經為您載入了 ${documentCount} 個文件。`;
+    let baseMessage = i18n.t('welcome.baseMessage', { count: documentCount });
 
     if (selectedCount > 0 && selectedCount < documentCount) {
-        baseMessage += `\n\n您目前選擇了 ${selectedCount} 個文件進行查詢。我會在這些選中的文件中尋找答案。`;
+        baseMessage += `\n\n${i18n.t('welcome.selectedPartial', { selectedCount })}`;
     } else if (selectedCount === documentCount && documentCount > 1) {
-        baseMessage += "\n\n您選擇了所有文件，我會在全部文件中為您查詢答案。";
+        baseMessage += `\n\n${i18n.t('welcome.selectedAll')}`;
     } else {
-        baseMessage += "\n\n請在左側選擇要查詢的文件，或選擇全部文件進行搜索。";
+        baseMessage += `\n\n${i18n.t('welcome.noSelection')}`;
     }
 
-    baseMessage += "\n\n您可以問我關於這些文件的任何問題！";
+    baseMessage += `\n\n${i18n.t('welcome.askQuestion')}`;
 
     return baseMessage;
 };

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Card, Button, Spin, message, Switch, Tooltip, Space, Typography } from 'antd';
 import { UserOutlined, ReloadOutlined, CopyOutlined, ClearOutlined   } from '@ant-design/icons';
 import { Bubble, Sender } from '@ant-design/x';
+import { useTranslation } from 'react-i18next';
 import MarkdownIt from 'markdown-it';
 
 
@@ -50,6 +51,7 @@ const renderMessageContent = (content) => {
 };
 
 export default function Chat({ widthSize = null }) {
+    const { t } = useTranslation();
     const { items: documents, selectedFileIds } = useSelector((state) => state.documents);
     const filteredDocuments = useMemo(() => documents, [documents]);
 
@@ -59,44 +61,6 @@ export default function Chat({ widthSize = null }) {
     const [enableProgress, setEnableProgress] = useState(true);
     const [progressMessages, setProgressMessages] = useState([]);
 
-    const handleClearChat = useCallback(() => {
-        setMessages([]);
-        setContent('');
-        setProgressMessages([]);
-    }, []);
-
-    const handleCopy = useCallback((messageContent) => {
-        console.log('handleCopy called with:', typeof messageContent, messageContent);
-        const textToCopy = extractMessageText(messageContent);
-        console.log('Copying text:', textToCopy);
-        if (!textToCopy.trim()) {
-            message.warning('沒有可複製的內容');
-            return;
-        }
-        navigator.clipboard.writeText(textToCopy)
-            .then(() => message.success('已複製到剪貼簿'))
-            .catch(() => message.error('複製失敗'));
-    }, []);
-
-    const handleResend = useCallback((messageContent) => {
-        const msgToResend = messages.find(msg => msg.message === messageContent && msg.status === 'local');
-        if (msgToResend) {
-            handleChatRequest(msgToResend.message);
-        }
-    }, [messages]);
-
-    const roles = useMemo(() => ({
-        ai: {
-            placement: 'start',
-            avatar: { icon: <UserOutlined />, style: { background: '#fde3cf' } },
-            style: { width: '80%' },
-        },
-        local: {
-            placement: 'end',
-            avatar: { icon: <UserOutlined />, style: { background: '#87d068' } },
-        },
-    }), []);
-
     const handleChatRequest = useCallback((userMessage) => {
         if (!userMessage.trim()) return;
 
@@ -104,7 +68,7 @@ export default function Chat({ widthSize = null }) {
         setProgressMessages([]);
 
         const userMessageObj = { id: `user-${Date.now()}`, message: userMessage, status: 'local' };
-        const loadingMessageObj = { id: `loading-${Date.now()}`, message: '正在處理您的查詢...', status: 'loading' };
+        const loadingMessageObj = { id: `loading-${Date.now()}`, message: t('chat.processingQuery'), status: 'loading' };
 
         flushSync(() => {
             setMessages(prev => [...prev, userMessageObj, loadingMessageObj]);
@@ -133,7 +97,7 @@ export default function Chat({ widthSize = null }) {
             console.error('聊天請求錯誤:', error);
             setMessages(prev => [
                 ...prev.filter(msg => msg.status !== 'loading'),
-                { id: `ai-error-${Date.now()}`, message: '抱歉，發生了錯誤，請稍後再試。', status: 'ai' },
+                { id: `ai-error-${Date.now()}`, message: t('chat.errorOccurred'), status: 'ai' },
             ]);
         };
 
@@ -149,8 +113,60 @@ export default function Chat({ widthSize = null }) {
         apiCall.then(handleSuccess).catch(handleError).finally(() => {
             setIsLoading(false);
         });
+    }, [selectedFileIds, filteredDocuments, enableProgress, t]);
 
-    }, [selectedFileIds, filteredDocuments, enableProgress, messages]);
+    // 監聽來自其他組件的消息發送事件
+    useEffect(() => {
+        const handleSendToChat = (event) => {
+            const { message } = event.detail;
+            if (message && message.trim()) {
+                handleChatRequest(message);
+            }
+        };
+
+        window.addEventListener('sendToChat', handleSendToChat);
+        return () => {
+            window.removeEventListener('sendToChat', handleSendToChat);
+        };
+    }, [handleChatRequest]);
+
+    const handleClearChat = useCallback(() => {
+        setMessages([]);
+        setContent('');
+        setProgressMessages([]);
+    }, []);
+
+    const handleCopy = useCallback((messageContent) => {
+        console.log('handleCopy called with:', typeof messageContent, messageContent);
+        const textToCopy = extractMessageText(messageContent);
+        console.log('Copying text:', textToCopy);
+        if (!textToCopy.trim()) {
+            message.warning(t('chat.noContentToCopy'));
+            return;
+        }
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => message.success(t('chat.copiedToClipboard')))
+            .catch(() => message.error(t('chat.copyFailed')));
+    }, [t]);
+
+    const handleResend = useCallback((messageContent) => {
+        const msgToResend = messages.find(msg => msg.message === messageContent && msg.status === 'local');
+        if (msgToResend) {
+            handleChatRequest(msgToResend.message);
+        }
+    }, [messages, handleChatRequest]);
+
+    const roles = useMemo(() => ({
+        ai: {
+            placement: 'start',
+            avatar: { icon: <UserOutlined />, style: { background: '#fde3cf' } },
+            style: { width: '80%' },
+        },
+        local: {
+            placement: 'end',
+            avatar: { icon: <UserOutlined />, style: { background: '#87d068' } },
+        },
+    }), []);
 
     return (
         <Card hoverable className={`h-full flex flex-col transition-all duration-300 ease-in-out`} style={{ width: widthSize || '100%' }} styles={{ body: { height: '100%', padding: 0, display: 'flex', flexDirection: 'column' } }}>
@@ -204,12 +220,12 @@ export default function Chat({ widthSize = null }) {
                                     footer: status === 'loading' ? null : (
                                         status === 'local' ? (
                                             <div className='flex gap-2'>
-                                                <Button type="text" size="small" icon={<ReloadOutlined />} onClick={() => handleResend(message)} title="重新發送" />
-                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title="複製訊息" />
+                                                <Button type="text" size="small" icon={<ReloadOutlined />} onClick={() => handleResend(message)} title={t('chat.resend')} />
+                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title={t('chat.copyMessage')} />
                                             </div>
                                         ) : (
                                             <div className='flex gap-2'>
-                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title="複製回應" />
+                                                <Button type="text" size="small" icon={<CopyOutlined />} onClick={() => handleCopy(message)} title={t('chat.copyResponse')} />
                                                 <TTSButton text={message} />
                                             </div>
                                         )
@@ -225,10 +241,10 @@ export default function Chat({ widthSize = null }) {
                 </div>
                 <div className="p-4 border-t border-gray-200">
                     <div className="flex gap-2 items-center mb-2">
-                        <Tooltip title="啟用時會顯示檢索進度">
+                        <Tooltip title={t('chat.progressTooltip')}>
                             <div className="flex items-center gap-2">
                                 <Switch size="small" checked={enableProgress} onChange={setEnableProgress} />
-                                <span className="text-xs text-gray-500">進度顯示</span>
+                                <span className="text-xs text-gray-500">{t('chat.progressDisplay')}</span>
                             </div>
                         </Tooltip>
                     </div>
@@ -241,16 +257,16 @@ export default function Chat({ widthSize = null }) {
                                 onChange={setContent}
                                 allowSpeech
                                 onSubmit={nextContent => { handleChatRequest(nextContent); setContent(''); }}
-                                placeholder='請輸入問題...'
+                                placeholder={t('chat.inputPlaceholder')}
                                 actions={(_, info) => {
                                     const { SendButton, LoadingButton, ClearButton, SpeechButton } = info.components;
                                     return (
                                         <>
                                             <Space size="small">
                                                 <Typography.Text type="secondary">
-                                                    <small>`Enter` to submit</small>
+                                                    <small>{t('chat.enterToSubmit')}</small>
                                                 </Typography.Text>
-                                                { messages.length > 0 && <Button type="text" icon={<ClearOutlined />} onClick={handleClearChat} title="清空對話" className="flex-shrink-0" /> }
+                                                { messages.length > 0 && <Button type="text" icon={<ClearOutlined />} onClick={handleClearChat} title={t('chat.clearChat')} className="flex-shrink-0" /> }
                                                 <SpeechButton />
                                                 {isLoading ? (
                                                     <LoadingButton type="default" icon={<Spin size="small" />} disabled />

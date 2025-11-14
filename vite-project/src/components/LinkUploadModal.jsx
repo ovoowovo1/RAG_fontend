@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input, message, Progress } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { uploadLink } from '../api/upload.js';
 import useUploadProgress from '../hooks/useUploadProgress.jsx';
 
 const LinkUploadModal = ({ visible, onCancel, onSuccess }) => {
+  const { t } = useTranslation();
   const [link, setLink] = useState('');
   const [uploading, setUploading] = useState(false);
   const { progress, showProgress, startTracking, stopTracking, abortTracking, genClientId } = useUploadProgress();
@@ -11,18 +13,18 @@ const LinkUploadModal = ({ visible, onCancel, onSuccess }) => {
   const handleOk = async () => {
     const url = (link || '').trim();
     if (!url) {
-      message.warning('請輸入連結');
+      message.warning(t('linkUploadModal.enterLink'));
       return;
     }
     try {
       setUploading(true);
       const cid = startTracking(genClientId());
       await uploadLink(url, cid);
-      message.success('連結已提交處理');
+      message.success(t('linkUploadModal.submitSuccess'));
       onSuccess && onSuccess();
       onCancel();
     } catch (err) {
-      const errorMessage = err.response?.data?.error || err.message || '連結提交失敗';
+      const errorMessage = err.response?.data?.error || err.message || t('linkUploadModal.submitFailed');
       message.error(errorMessage);
     } finally {
       setUploading(false);
@@ -38,16 +40,16 @@ const LinkUploadModal = ({ visible, onCancel, onSuccess }) => {
 
   return (
     <Modal
-      title="新增連結"
+      title={t('linkUploadModal.title')}
       open={visible}
       onCancel={handleCancel}
       onOk={handleOk}
-      okText={uploading ? '提交中...' : '提交'}
+      okText={uploading ? t('linkUploadModal.submitting') : t('linkUploadModal.submit')}
       okButtonProps={{ disabled: !link.trim(), loading: uploading }}
       destroyOnClose
     >
       <Input
-        placeholder="輸入要抓取的連結，例如 https://example.com/article"
+        placeholder={t('linkUploadModal.placeholder')}
         value={link}
         onChange={(e) => setLink(e.target.value)}
         onPressEnter={handleOk}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Typography, Button, message, Divider, List, Tag } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { MenuFoldOutlined, MenuUnfoldOutlined, DeleteOutlined } from '@ant-design/icons'
 
 import AudioCard from './AudioCard'
@@ -17,6 +18,7 @@ import { getAllQuizzes, deleteQuiz } from '../../api/quiz'
 
 
 export default function StudioCard({ widthSize = null }) {
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     const { Title } = Typography;
     const isStudioCardCollapsed = useSelector((state) => state.studio.isStudioCardCollapsed);
@@ -33,7 +35,7 @@ export default function StudioCard({ widthSize = null }) {
             setQuizzes(response.data.quizzes || []);
         } catch (error) {
             console.error('獲取測驗列表失敗:', error);
-            message.error('獲取測驗列表失敗');
+            message.error(t('studioCard.fetchQuizzesFailed'));
         } finally {
             setListLoading(false);
         }
@@ -50,11 +52,11 @@ export default function StudioCard({ widthSize = null }) {
         e.stopPropagation();
         try {
             await deleteQuiz(quizId);
-            message.success('測驗已刪除');
+            message.success(t('studioCard.quizDeleted'));
             loadQuizzes();
         } catch (error) {
             console.error('刪除測驗失敗:', error);
-            message.error('刪除測驗失敗');
+            message.error(t('studioCard.deleteQuizFailed'));
         }
     };
 
@@ -69,9 +71,10 @@ export default function StudioCard({ widthSize = null }) {
     };
 
     const formatDate = (timestamp) => {
-        if (!timestamp) return '未知時間';
+        if (!timestamp) return t('studioCard.unknownTime');
         const date = new Date(parseInt(timestamp));
-        return date.toLocaleString('zh-TW', {
+        const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
+        return date.toLocaleString(locale, {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
@@ -98,7 +101,7 @@ export default function StudioCard({ widthSize = null }) {
                                 shape='circle'
                                 type="text"
                                 icon={< MenuFoldOutlined />}
-                                title="展開 Studio"
+                                title={t('studioCard.expandStudio')}
                             />
 
                             <CollapsedIcon />
@@ -116,7 +119,7 @@ export default function StudioCard({ widthSize = null }) {
                 ) : (
                     <>
                         <div className="flex mb-4">
-                            <Title level={4} className="m-0">Studio</Title>
+                            <Title level={4} className="m-0">{t('studioCard.title')}</Title>
 
 
                             <Button
@@ -125,7 +128,7 @@ export default function StudioCard({ widthSize = null }) {
                                 shape='circle'
                                 type="text"
                                 icon={<MenuUnfoldOutlined />}
-                                title="折疊 Studio"
+                                title={t('studioCard.collapseStudio')}
                             />
                         </div>
 
@@ -147,7 +150,7 @@ export default function StudioCard({ widthSize = null }) {
                                 dataSource={quizzes}
                                 split={false}
                                 loading={listLoading}
-                                locale={{ emptyText: '尚無測驗記錄' }}
+                                locale={{ emptyText: t('studioCard.noQuizzes') }}
                                 renderItem={(item) => (
                                     <List.Item
                                         className="cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg mb-2 transition-colors"
@@ -157,10 +160,10 @@ export default function StudioCard({ widthSize = null }) {
                                             <div className="flex justify-between items-start mb-1">
                                                 <div className="flex-1">
                                                     <div className="font-medium text-gray-800 mb-1">
-                                                        {item.name || '未命名測驗'}
+                                                        {item.name || t('studioCard.unnamedQuiz')}
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <Tag color="green">{item.num_questions} 題</Tag>
+                                                        <Tag color="green">{item.num_questions} {t('studioCard.questions')}</Tag>
 
                                                     </div>
                                                 </div>
@@ -177,7 +180,7 @@ export default function StudioCard({ widthSize = null }) {
                                             </div>
                                             {item.documents && item.documents.length > 0 && (
                                                 <div className="text-xs text-gray-600 mt-1 truncate">
-                                                    來源: {item.documents.map(d => d.name).join(', ')}
+                                                    {t('studioCard.source')}: {item.documents.map(d => d.name).join(', ')}
                                                 </div>
                                             )}
                                         </div>

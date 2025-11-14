@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Radio, Typography, Space, Progress, Card, message, Spin } from 'antd'
-import { ArrowLeftOutlined, ArrowRightOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { ArrowLeftOutlined, ArrowRightOutlined, CheckCircleOutlined, CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import { getQuizById } from '../../api/quiz'
 
 const { Title, Text, Paragraph } = Typography
 
 export default function QuizReader({ quizId, quizName, onClose }) {
+    const { t } = useTranslation()
     const [loading, setLoading] = useState(true)
     const [questions, setQuestions] = useState([])
     const [currentIndex, setCurrentIndex] = useState(0)
@@ -24,7 +26,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                 setUserAnswers(new Array(response.data.quiz.questions.length).fill(null))
             } catch (error) {
                 console.error('加載測驗失敗:', error)
-                message.error('加載測驗失敗')
+                message.error(t('quizReader.loadFailed'))
             } finally {
                 setLoading(false)
             }
@@ -41,7 +43,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
 
     const handleSubmitAnswer = () => {
         if (selectedAnswer === null) {
-            message.warning('請選擇一個答案')
+            message.warning(t('quizReader.selectAnswer'))
             return
         }
         
@@ -84,6 +86,34 @@ export default function QuizReader({ quizId, quizName, onClose }) {
         return { correct, total: questions.length, percentage: Math.round((correct / questions.length) * 100) }
     }
 
+    const handleExplainDetails = () => {
+        if (!currentQuestion || selectedAnswer === null) return
+
+        const selectedAnswerText = currentQuestion.choices[selectedAnswer]
+        const correctAnswerText = currentQuestion.choices[currentQuestion.answer_index]
+        const isAnswerCorrect = selectedAnswer === currentQuestion.answer_index
+
+        // 構建消息文本
+        let messageText = t('quizReader.quizQuestionPrompt', { question: currentQuestion.question })
+        messageText += '\n\n' + t('quizReader.selectedAnswerPrompt', { answer: selectedAnswerText })
+        
+        if (isAnswerCorrect) {
+            messageText += '\n\n' + t('quizReader.answerCorrect')
+        } else {
+            messageText += '\n\n' + t('quizReader.answerIncorrect', { correctAnswer: correctAnswerText })
+        }
+        
+        messageText += '\n\n' + t('quizReader.pleaseHelp')
+
+        // 發送自定義事件到 Chat 組件
+        const event = new CustomEvent('sendToChat', {
+            detail: { message: messageText }
+        })
+        window.dispatchEvent(event)
+
+        message.success(t('quizReader.messageSent'))
+    }
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -102,13 +132,13 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                         icon={<ArrowLeftOutlined />} 
                         onClick={onClose}
                     >
-                        返回
+                        {t('quizReader.back')}
                     </Button>
                 </div>
                 
                 <div className="flex-1 flex flex-col items-center justify-center">
                     <div className="text-center mb-8">
-                        <Title level={2}>測驗完成！</Title>
+                        <Title level={2}>{t('quizReader.quizCompleted')}</Title>
                         <Title level={1} className="text-green-600">
                             {score.correct}/{score.total}
                         </Title>
@@ -129,7 +159,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                     
                     <Space className="mt-8">
                         <Button size="large" onClick={onClose}>
-                            返回列表
+                            {t('quizReader.backToList')}
                         </Button>
                         <Button 
                             size="large" 
@@ -142,7 +172,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                                 setIsFinished(false)
                             }}
                         >
-                            重新測驗
+                            {t('quizReader.retakeQuiz')}
                         </Button>
                     </Space>
                 </div>
@@ -162,7 +192,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                         icon={<ArrowLeftOutlined />} 
                         onClick={onClose}
                     />
-                    <Title level={5} className="m-0">{quizName || '測驗'}</Title>
+                    <Title level={5} className="m-0">{quizName || t('quizReader.quiz')}</Title>
                 </div>
                 <Text className="text-gray-500">
                     {currentIndex + 1} / {questions.length}
@@ -226,13 +256,21 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                 {/* Rationale */}
                 {showResult && (
                     <Card className="mt-4" style={{ backgroundColor: isCorrect ? '#f6ffed' : '#fff2e8' }}>
-                        <Space direction="vertical" size="small">
+                        <Space direction="vertical" size="small" className="w-full">
                             <Text strong className={isCorrect ? 'text-green-600' : 'text-orange-600'}>
-                                {isCorrect ? '✓ 答對了！' : '✗ 答錯了'}
+                                {isCorrect ? t('quizReader.correct') : t('quizReader.incorrect')}
                             </Text>
                             <Paragraph className="mb-0">
-                                <Text strong>解釋：</Text> {currentQuestion.rationale}
+                                <Text strong>{t('quizReader.rationale')}</Text> {currentQuestion.rationale}
                             </Paragraph>
+                            <Button 
+                                type="default" 
+                                icon={<QuestionCircleOutlined />}
+                                onClick={handleExplainDetails}
+                                className="mt-2"
+                            >
+                                {t('quizReader.explainDetails')}
+                            </Button>
                         </Space>
                     </Card>
                 )}
@@ -245,7 +283,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                     disabled={currentIndex === 0}
                     icon={<ArrowLeftOutlined />}
                 >
-                    上一題
+                    {t('quizReader.previous')}
                 </Button>
 
                 {!showResult ? (
@@ -253,7 +291,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                         type="primary"
                         onClick={handleSubmitAnswer}
                     >
-                        提交答案
+                        {t('quizReader.submitAnswer')}
                     </Button>
                 ) : (
                     <Button 
@@ -261,7 +299,7 @@ export default function QuizReader({ quizId, quizName, onClose }) {
                         onClick={handleNext}
                         icon={currentIndex === questions.length - 1 ? undefined : <ArrowRightOutlined />}
                     >
-                        {currentIndex === questions.length - 1 ? '完成測驗' : '下一題'}
+                        {currentIndex === questions.length - 1 ? t('quizReader.finishQuiz') : t('quizReader.next')}
                     </Button>
                 )}
             </div>

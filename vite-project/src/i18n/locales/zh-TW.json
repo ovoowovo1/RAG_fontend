@@ -1,0 +1,151 @@
+{
+  "welcome": {
+    "noDocuments": "歡迎使用智慧文件助手！請先上傳一些文件，然後我就可以幫您分析其中的內容。",
+    "baseMessage": "歡迎使用智慧文件助手！我已經為您載入了 {{count}} 個文件。",
+    "selectedPartial": "您目前選擇了 {{selectedCount}} 個文件進行查詢。我會在這些選中的文件中尋找答案。",
+    "selectedAll": "您選擇了所有文件，我會在全部文件中為您查詢答案。",
+    "noSelection": "請在左側選擇要查詢的文件，或選擇全部文件進行搜索。",
+    "askQuestion": "您可以問我關於這些文件的任何問題！",
+    "documentContent": "文件內容"
+  },
+  "documentContentViewer": {
+    "documentContent": "文件內容"
+  },
+  "addSourceModal": {
+    "title": "新增來源",
+    "selectType": "請選擇要新增的來源種類",
+    "uploadPdf": "上傳 PDF",
+    "addLink": "新增連結"
+  },
+  "uploadModal": {
+    "title": "上傳 PDF 文件",
+    "selectFiles": "請選擇要上傳的文件",
+    "uploadSuccess": "{{count}} 個檔案全部上傳成功。",
+    "uploadFailed": "檔案上傳失敗",
+    "uploadError": "上傳失敗: {{error}}",
+    "notPdfFile": "{{fileName}} 不是一個 PDF 檔案，已自動移除。",
+    "cancel": "取消",
+    "uploading": "上傳中...",
+    "confirmUpload": "確認上傳 {{count}} 個檔案",
+    "dragText": "點擊或拖曳多個 PDF 到這裡",
+    "hint": "支援上傳多個 PDF 檔案。選擇檔案後請點擊下方的確認按鈕。"
+  },
+  "linkUploadModal": {
+    "title": "新增連結",
+    "enterLink": "請輸入連結",
+    "submitSuccess": "連結已提交處理",
+    "submitFailed": "連結提交失敗",
+    "submitting": "提交中...",
+    "submit": "提交",
+    "placeholder": "輸入要抓取的連結，例如 https://example.com/article"
+  },
+  "documentList": {
+    "documentDeleted": "文件已刪除",
+    "expandList": "展開文件列表",
+    "collapseList": "折疊文件列表",
+    "sources": "來源",
+    "searchPlaceholder": "搜尋文件...",
+    "selectAll": "選擇所有來源",
+    "add": "新增",
+    "sourcesCount": "{{count}} 個來源",
+    "selectedCount": "（已選擇 {{count}} 個）"
+  },
+  "renameModal": {
+    "title": "重新命名文件",
+    "enterNewName": "請輸入新的文件名稱",
+    "nameUnchanged": "名稱沒有變更",
+    "renameSuccess": "文件已重新命名",
+    "renameFailed": "重新命名失敗",
+    "confirm": "確認",
+    "cancel": "取消",
+    "placeholder": "請輸入新的文件名稱",
+    "hint": "按 Enter 鍵快速確認"
+  },
+  "documentStatusIcon": {
+    "delete": "刪除",
+    "rename": "重新命名"
+  },
+  "chat": {
+    "noContentToCopy": "沒有可複製的內容",
+    "copiedToClipboard": "已複製到剪貼簿",
+    "copyFailed": "複製失敗",
+    "processingQuery": "正在處理您的查詢...",
+    "errorOccurred": "抱歉，發生了錯誤，請稍後再試。",
+    "resend": "重新發送",
+    "copyMessage": "複製訊息",
+    "copyResponse": "複製回應",
+    "progressTooltip": "啟用時會顯示檢索進度",
+    "progressDisplay": "進度顯示",
+    "inputPlaceholder": "請輸入問題...",
+    "enterToSubmit": "按 Enter 鍵提交",
+    "clearChat": "清空對話"
+  },
+  "studioCard": {
+    "title": "Studio",
+    "expandStudio": "展開 Studio",
+    "collapseStudio": "折疊 Studio",
+    "fetchQuizzesFailed": "獲取測驗列表失敗",
+    "quizDeleted": "測驗已刪除",
+    "deleteQuizFailed": "刪除測驗失敗",
+    "unknownTime": "未知時間",
+    "noQuizzes": "尚無測驗記錄",
+    "unnamedQuiz": "未命名測驗",
+    "questions": "題",
+    "source": "來源"
+  },
+  "retrievalProgress": {
+    "graphRetrieval": "圖譜檢索",
+    "vectorRetrieval": "向量檢索",
+    "fulltextRetrieval": "全文檢索",
+    "running": "進行中",
+    "waiting": "等待中",
+    "completed": "檢索完成",
+    "inProgress": "檢索進度",
+    "results": "個結果",
+    "latestProgress": "最新進度",
+    "queryCompleted": "✅ 查詢完成"
+  },
+  "proChatHelpers": {
+    "invalidMessage": "無效的訊息內容",
+    "noValidResult": "未收到有效的結果",
+    "errorOccurred": "抱歉，發生了錯誤，請稍後再試。",
+    "serviceUnavailable": "服務暫時不可用，請稍後再試。",
+    "badRequest": "請求格式錯誤。",
+    "networkError": "網路連接錯誤，請檢查網路設定。"
+  },
+  "ttsButton": {
+    "noTextToConvert": "沒有可轉換的文本內容",
+    "playbackFailed": "音頻播放失敗",
+    "generationFailed": "語音生成失敗，請稍後再試",
+    "stopPlayback": "停止播放",
+    "voicePlayback": "語音播放"
+  },
+  "citation": {
+    "title": "引用來源",
+    "source": "來源",
+    "page": "頁碼"
+  },
+  "quizReader": {
+    "loadFailed": "加載測驗失敗",
+    "selectAnswer": "請選擇一個答案",
+    "back": "返回",
+    "quizCompleted": "測驗完成！",
+    "backToList": "返回列表",
+    "retakeQuiz": "重新測驗",
+    "quiz": "測驗",
+    "correct": "✓ 答對了！",
+    "incorrect": "✗ 答錯了",
+    "rationale": "解釋：",
+    "previous": "上一題",
+    "submitAnswer": "提交答案",
+    "finishQuiz": "完成測驗",
+    "next": "下一題",
+    "explainDetails": "解釋詳情",
+    "messageSent": "已發送到聊天",
+    "quizQuestionPrompt": "我進行這份教材的測驗時，看到這一題：「{{question}}」",
+    "selectedAnswerPrompt": "當時選擇了以下答案：「{{answer}}」",
+    "answerCorrect": "該答案正確。",
+    "answerIncorrect": "該答案不正確。正確答案是「{{correctAnswer}}」",
+    "pleaseHelp": "請幫我解釋為什麼這個答案是正確/錯誤的，以及相關的概念。"
+  }
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, List, Typography, Button, Input, message } from 'antd';
 import { MenuFoldOutlined, MenuUnfoldOutlined, ShrinkOutlined, PlusOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 import {
     fetchDocuments,
@@ -24,6 +25,7 @@ const { Title, Text } = Typography;
 const { Search } = Input;
 
 export default function DocumentList({ widthSize, isMediumScreen }) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const {
         items: documents,
@@ -55,7 +57,7 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
 
     const handleDeleteClick = (docId) => {
         dispatch(deleteDocument(docId)).then(() => {
-            message.success('文件已刪除');
+            message.success(t('documentList.documentDeleted'));
         });
     };
 
@@ -110,7 +112,7 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                                 shape='circle'
                                 type="text"
                                 icon={<MenuUnfoldOutlined />}
-                                title="展開文件列表"
+                                title={t('documentList.expandList')}
                             />
 
                             <Button
@@ -151,7 +153,7 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                 ) : (
                     <>
                         <div className="flex mb-4">
-                            <Title level={4} className="m-0">Sources</Title>
+                            <Title level={4} className="m-0">{t('documentList.sources')}</Title>
 
 
                             <Button
@@ -160,7 +162,7 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                                 shape='circle'
                                 type="text"
                                 icon={<MenuFoldOutlined />}
-                                title="折疊文件列表"
+                                title={t('documentList.collapseList')}
                             />
 
 
@@ -176,7 +178,7 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                         {!selectedShowDocumentContentID && (
                             <>
                                 <Search
-                                    placeholder="搜尋文件..."
+                                    placeholder={t('documentList.searchPlaceholder')}
                                     value={searchTerm}
                                     onChange={(e) => dispatch(setSearchTerm(e.target.value))}
                                     className="mb-4"
@@ -189,14 +191,14 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                                         onChange={handleSelectAll}
                                         className="mr-2"
                                     />
-                                    <Text className="text-zinc-300">Select all sources</Text>
+                                    <Text className="text-zinc-300">{t('documentList.selectAll')}</Text>
                                     <Button
                                         className='ml-auto'
                                         type="primary"
                                         icon={<PlusOutlined />}
                                         onClick={() => setAddSourceModalVisible(true)}
                                     >
-                                        Add
+                                        {t('documentList.add')}
                                     </Button>
                                 </div>
                                 <div className="border-t border-gray-100 flex-1 overflow-y-auto min-h-0">
@@ -224,9 +226,9 @@ export default function DocumentList({ widthSize, isMediumScreen }) {
                                 </div>
                                 <div className="p-4 border-t border-gray-100">
                                     <Text className="text-zinc-400 text-xs">
-                                        {filteredDocuments.length} sources
+                                        {t('documentList.sourcesCount', { count: filteredDocuments.length })}
                                         {selectedFileIds.length > 0 && (
-                                            <span className="ml-2 text-blue-500">({selectedFileIds.length} selected)</span>
+                                            <span className="ml-2 text-blue-500">{t('documentList.selectedCount', { count: selectedFileIds.length })}</span>
                                         )}
                                     </Text>
                                 </div>

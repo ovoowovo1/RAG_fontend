@@ -1,18 +1,20 @@
 import React from 'react';
 import { Progress, Card, Row, Col, Typography, Tag, Flex } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { SearchOutlined, DatabaseOutlined, FileTextOutlined, CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
 const RetrievalProgress = ({ progressMessages = [] }) => {
-    const isCompleted = progressMessages.some(msg => msg.message?.includes('✅ 查詢完成'));
+    const { t } = useTranslation();
+    const isCompleted = progressMessages.some(msg => msg.message?.includes(t('retrievalProgress.queryCompleted')));
 
     const parseProgress = (messages) => {
         // ############ STEP 1: 在任務物件中增加 count 屬性 ############
         const tasks = {
-            graph: { name: '圖譜檢索', status: 'waiting', icon: <DatabaseOutlined />, color: '#1890ff', count: null },
-            vector: { name: '向量檢索', status: 'waiting', icon: <SearchOutlined />, color: '#52c41a', count: null },
-            fulltext: { name: '全文檢索', status: 'waiting', icon: <FileTextOutlined />, color: '#faad14', count: null }
+           // graph: { name: t('retrievalProgress.graphRetrieval'), status: 'waiting', icon: <DatabaseOutlined />, color: '#1890ff', count: null },
+            vector: { name: t('retrievalProgress.vectorRetrieval'), status: 'waiting', icon: <SearchOutlined />, color: '#52c41a', count: null },
+            fulltext: { name: t('retrievalProgress.fulltextRetrieval'), status: 'waiting', icon: <FileTextOutlined />, color: '#faad14', count: null }
         };
 
         messages.forEach(msg => {
@@ -60,15 +62,17 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
 
     const getStatusTag = (status) => {
         switch (status) {
-            case 'running': return <Tag color="processing">進行中</Tag>;
-            case 'waiting': return <Tag color="default">等待中</Tag>;
+            case 'running': return <Tag color="processing">{t('retrievalProgress.running')}</Tag>;
+            case 'waiting': return <Tag color="default">{t('retrievalProgress.waiting')}</Tag>;
             default: return null; // 'completed' 狀態將由結果數量標籤替代
         }
     };
 
+    const taskCount = Object.keys(tasks).length; // 實際存在的任務數量
     const completedCount = Object.values(tasks).filter(task => task.status === 'completed').length;
     const runningCount = Object.values(tasks).filter(task => task.status === 'running').length;
-    const totalProgress = completedCount * (100 / 3) + runningCount * (50 / 3);
+    const progressPerTask = 100 / taskCount; // 每個任務的進度百分比
+    const totalProgress = completedCount * progressPerTask + runningCount * (progressPerTask / 2);
     const finalProgress = isCompleted ? 100 : totalProgress;
 
     const lastNonResultMessage = [...progressMessages].reverse().find(msg => msg.type !== 'result');
@@ -87,7 +91,7 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <Text strong style={{ fontSize: '12px' }}>
-                            {isCompleted ? '檢索完成' : '檢索進度'}
+                            {isCompleted ? t('retrievalProgress.completed') : t('retrievalProgress.inProgress')}
                         </Text>
                         <Text style={{ fontSize: '11px', color: '#666' }}>
                             {Math.round(finalProgress)}%
@@ -119,7 +123,7 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
                           
                             {task.status === 'completed' && typeof task.count === 'number' ? (
                                 <Tag>
-                                    {task.count} 個結果
+                                    {task.count} {t('retrievalProgress.results')}
                                 </Tag>
                             ) : (
                                 getStatusTag(task.status)
@@ -132,7 +136,7 @@ const RetrievalProgress = ({ progressMessages = [] }) => {
                 {!isCompleted && lastProgressMessage && (
                     <div className="border-t pt-2 mt-2">
                         <Text ellipsis={'expandable'} style={{ fontSize: '11px', color: '#888' }} className='truncate'>
-                            最新進度: {lastProgressMessage}
+                            {t('retrievalProgress.latestProgress')}: {lastProgressMessage}
                         </Text>
                     </div>
                 )}

@@ -5,6 +5,7 @@ import { Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDocumentContent } from '../redux/documentSlice';
 import LazyLoadChunk from './LazyLoadChunk';
+import i18n from '../i18n';
 
 const DocumentContentViewer = ({
     selectedShowDocumentContentID
@@ -37,7 +38,7 @@ const DocumentContentViewer = ({
 
             ) : documentData ? (
                 <div className="flex flex-col flex-1 h-full">
-                    <h4 className="mb-2 flex-shrink-0">文件內容</h4>
+                    <h4 className="mb-2 flex-shrink-0">{i18n.t('documentContentViewer.documentContent')}</h4>
                     <div className="overflow-y-auto flex-1 h-0">
                         {documentData.chunks.map((chunk, index) => (
                             <LazyLoadChunk key={index} chunk={chunk} />

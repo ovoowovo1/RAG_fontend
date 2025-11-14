@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Dropdown } from 'antd';
+import { useTranslation } from 'react-i18next';
 import {
     DeleteOutlined,
     EditOutlined,
@@ -22,16 +23,17 @@ const DocumentStatusIcon = ({
     onDelete,
     onRename,
 }) => {
+    const { t } = useTranslation();
     const menuItems = [
         {
             key: '1',
-            label: '刪除',
+            label: t('documentStatusIcon.delete'),
             icon: <DeleteOutlined />,
             onClick: () => onDelete(docId),
         },
         {
             key: '2',
-            label: '重新命名',
+            label: t('documentStatusIcon.rename'),
             icon: <EditOutlined />,
             onClick: () => onRename(docId),
         }
