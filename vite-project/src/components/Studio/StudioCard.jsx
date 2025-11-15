@@ -132,7 +132,7 @@ export default function StudioCard({ widthSize = null }) {
                             />
                         </div>
 
-
+                        {/* 
                         <div className="grid grid-cols-2 gap-4">
                             <AudioCard />
                             <VideoCard />
@@ -141,6 +141,13 @@ export default function StudioCard({ widthSize = null }) {
                             <FlashCard />
                             <QuizCard onQuizGenerated={loadQuizzes} />
                         </div>
+                        */}
+                        
+                        <div >
+                            <QuizCard onQuizGenerated={loadQuizzes} />
+
+                        </div>
+
 
                         <Divider />
 

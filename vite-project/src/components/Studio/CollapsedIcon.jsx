@@ -30,11 +30,11 @@ export default function CollapsedIcon() {
 
 
     const ACTIONS = [
-        { bg: "#edeffa", color: "#224484", icon: "graphic_eq", label: "Audio" },
-        { bg: "#E1F1E5", color: "#23633C", icon: "video_library", label: "Videos" },
-        { bg: "#F0E9EF", color: "#8E659A", icon: "flowchart", label: "Flowchart" },
-        { bg: "#F2F2E8", color: "#796731", icon: "files", label: "Files" },
-        { bg: "#f7edeb", color: "#8c2e2a", icon: "cards_star", label: "Featured" },
+       // { bg: "#edeffa", color: "#224484", icon: "graphic_eq", label: "Audio" },
+       // { bg: "#E1F1E5", color: "#23633C", icon: "video_library", label: "Videos" },
+       // { bg: "#F0E9EF", color: "#8E659A", icon: "flowchart", label: "Flowchart" },
+       // { bg: "#F2F2E8", color: "#796731", icon: "files", label: "Files" },
+       // { bg: "#f7edeb", color: "#8c2e2a", icon: "cards_star", label: "Featured" },
         { bg: "#ecfccb", color: "#4d7c0f", icon: "quiz", label: "Quiz" }, // lime-100 / lime-600
     ];
 
