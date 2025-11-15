@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { useSelector } from 'react-redux';
 import { Card, Button, Spin, message, Switch, Tooltip, Space, Typography } from 'antd';
-import { UserOutlined, ReloadOutlined, CopyOutlined, ClearOutlined   } from '@ant-design/icons';
+import { UserOutlined, ReloadOutlined, CopyOutlined, ClearOutlined ,FileImageOutlined   } from '@ant-design/icons';
 import { Bubble, Sender } from '@ant-design/x';
 import { useTranslation } from 'react-i18next';
 import MarkdownIt from 'markdown-it';
@@ -24,6 +24,65 @@ const md = new MarkdownIt({
 });
 
 const renderMessageContent = (content) => {
+    // 處理包含圖像的對象
+    if (typeof content === 'object' && content !== null && !Array.isArray(content)) {
+        // 優先處理結構化內容（answer_with_citations）
+        if (content.answer_with_citations && Array.isArray(content.answer_with_citations)) {
+            const hasImage = content.hasImage && content.imageData;
+            return (
+                <div className="prose max-w-none markdown-content leading-relaxed text-sm">
+                    <div className="prose max-w-none markdown-content leading-relaxed text-sm">
+                        {content.answer_with_citations.map((part, index) => {
+                            if (part.type === 'text') {
+                                let renderedHtml = md.render(part.value);
+                                if (renderedHtml.startsWith('<p>') && renderedHtml.endsWith('</p>\n') && (renderedHtml.match(/<p>/g) || []).length === 1) {
+                                    renderedHtml = renderedHtml.slice(3, renderedHtml.length - 5);
+                                }
+                                return <span key={index} dangerouslySetInnerHTML={{ __html: renderedHtml }} />;
+                            }
+                            if (part.type === 'citation') {
+                                return <Citation key={index} part={part} index={index} />;
+                            }
+                            return null;
+                        })}
+                    </div>
+                    {hasImage && (
+                        <div className="mt-4">
+                            <img 
+                                src={content.imageData} 
+                                alt="Generated image" 
+                                className="max-w-full rounded-lg shadow-md"
+                                style={{ maxHeight: '500px', objectFit: 'contain' }}
+                            />
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        // 處理包含圖像但沒有結構化內容的情況
+        if (content.hasImage && content.imageData) {
+            return (
+                <div className="prose max-w-none markdown-content leading-relaxed text-sm">
+                    {content.answer && (
+                        <div dangerouslySetInnerHTML={{ __html: md.render(content.answer) }} />
+                    )}
+                    <div className="mt-4">
+                        <img 
+                            src={content.imageData} 
+                            alt="Generated image" 
+                            className="max-w-full rounded-lg shadow-md"
+                            style={{ maxHeight: '500px', objectFit: 'contain' }}
+                        />
+                    </div>
+                </div>
+            );
+        }
+        // 如果沒有圖像，嘗試渲染 answer 字段
+        if (content.answer) {
+            const renderedContent = md.render(content.answer);
+            return <div dangerouslySetInnerHTML={{ __html: renderedContent }} className="prose max-w-none markdown-content leading-relaxed text-sm" />;
+        }
+    }
     if (typeof content === 'string') {
         const renderedContent = md.render(content);
         return <div dangerouslySetInnerHTML={{ __html: renderedContent }} className="prose max-w-none markdown-content leading-relaxed text-sm" />;
@@ -60,6 +119,7 @@ export default function Chat({ widthSize = null }) {
     const [isLoading, setIsLoading] = useState(false);
     const [enableProgress, setEnableProgress] = useState(true);
     const [progressMessages, setProgressMessages] = useState([]);
+    const [generateImage, setGenerateImage] = useState(false);
 
     const handleChatRequest = useCallback((userMessage) => {
         if (!userMessage.trim()) return;
@@ -80,6 +140,7 @@ export default function Chat({ widthSize = null }) {
                 selectedFileIds: selectedFileIds.length > 0 ? selectedFileIds : undefined,
                 documentCount: filteredDocuments.length,
                 selectedCount: selectedFileIds.length,
+                generateImage: generateImage,
             },
         };
 
@@ -87,9 +148,21 @@ export default function Chat({ widthSize = null }) {
             const responseText = await response.text();
             let responseContent;
             try { responseContent = JSON.parse(responseText); } catch (e) { responseContent = responseText; }
+            
+            // 檢查是否有生成的圖像
+            let messageWithImage = responseContent;
+            if (typeof responseContent === 'object' && responseContent.generated_image) {
+                // 如果有圖像，將其添加到消息內容中
+                messageWithImage = {
+                    ...responseContent,
+                    hasImage: true,
+                    imageData: responseContent.generated_image
+                };
+            }
+            
             setMessages(prev => [
                 ...prev.filter(msg => msg.status !== 'loading'),
-                { id: `ai-${Date.now()}`, message: responseContent, status: 'ai' },
+                { id: `ai-${Date.now()}`, message: messageWithImage, status: 'ai' },
             ]);
         };
 
@@ -113,7 +186,7 @@ export default function Chat({ widthSize = null }) {
         apiCall.then(handleSuccess).catch(handleError).finally(() => {
             setIsLoading(false);
         });
-    }, [selectedFileIds, filteredDocuments, enableProgress, t]);
+    }, [selectedFileIds, filteredDocuments, enableProgress, generateImage, t]);
 
     // 監聽來自其他組件的消息發送事件
     useEffect(() => {
@@ -278,6 +351,19 @@ export default function Chat({ widthSize = null }) {
                                         </>
                                     )
                                 }}
+
+                                footer={
+                                    <div className="flex gap-2 items-center">
+                                        <Tooltip title={generateImage ? t('chat.disableImageGeneration') : t('chat.enableImageGeneration')}>
+                                            <Button 
+                                                type={generateImage ? "primary" : "text"} 
+                                                icon={<FileImageOutlined />} 
+                                                className="flex-shrink-0"
+                                                onClick={() => setGenerateImage(!generateImage)}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                }
 
                             />
                         </div>

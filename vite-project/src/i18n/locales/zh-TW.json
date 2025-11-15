@@ -78,7 +78,9 @@
     "progressDisplay": "進度顯示",
     "inputPlaceholder": "請輸入問題...",
     "enterToSubmit": "按 Enter 鍵提交",
-    "clearChat": "清空對話"
+    "clearChat": "清空對話",
+    "enableImageGeneration": "啟用圖像生成",
+    "disableImageGeneration": "停用圖像生成"
   },
   "studioCard": {
     "title": "Studio",

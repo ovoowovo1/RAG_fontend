@@ -252,8 +252,16 @@ export const handleProChatRequestWithProgress = async (messages, options = {}) =
                 }
             }
 
+            // 構建返回對象，包含結構化內容和圖像（如果有的話）
+            const resultObject = {
+                answer: finalResult.answer,
+                answer_with_citations: structuredContent,
+                raw_sources: finalResult.raw_sources || [],
+                generated_image: finalResult.generated_image || null
+            };
+            
             return {
-                text: () => Promise.resolve(JSON.stringify(structuredContent))
+                text: () => Promise.resolve(JSON.stringify(resultObject))
             };
         }
 

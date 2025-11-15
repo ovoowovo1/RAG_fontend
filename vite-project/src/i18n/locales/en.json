@@ -78,7 +78,11 @@
     "progressDisplay": "Progress Display",
     "inputPlaceholder": "Please enter your question...",
     "enterToSubmit": "Press Enter to submit",
-    "clearChat": "Clear chat"
+    "clearChat": "Clear chat",
+    "sending": "Sending...",
+    "send": "Send",
+    "enableImageGeneration": "Enable image generation",
+    "disableImageGeneration": "Disable image generation"
   },
   "studioCard": {
     "title": "Studio",
